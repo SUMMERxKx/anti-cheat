@@ -80,22 +80,32 @@ one entry per line, each wrapped in backticks.
 - `mach_vm_read` (and variants)
 - `mach_vm_write`
 - `vm_read`
+- `vm_write`
 - `ReadProcessMemory`
 - `WriteProcessMemory`
+- `NtReadVirtualMemory`
+- `NtWriteVirtualMemory`
 - `OpenProcess`
 - `VirtualAllocEx`
 - `CreateRemoteThread`
 - `SetWindowsHookEx`
 - `ptrace`
 - `process_vm_readv`
+- `process_vm_writev`
+- `/mem"` (path literals such as /proc/<pid>/mem)
 - `DYLD_INSERT_LIBRARIES`
 - `LD_PRELOAD`
 - `CGEventPost`
+- `CGEventTapPostEvent`
 - `CGEventCreateMouseEvent`
+- `CGWarpMouseCursorPosition`
 - `SendInput`
 - `mouse_event`
+- `keybd_event`
 - `IOHIDPostEvent`
 - `uinput`
+- `XTestFake` (and variants)
+- `XSendEvent`
 <!-- forbidden-api-list:end -->
 
 `tests/safety/forbidden_apis_selftest.sh` proves the guard works. It plants each entry in a

@@ -20,7 +20,7 @@ safety="$root/SAFETY.md"
 
 # The list in SAFETY.md has this many entries. A change to the list should be a
 # deliberate edit here too, so an entry cannot vanish unnoticed.
-expected_entries=20
+expected_entries=30
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
