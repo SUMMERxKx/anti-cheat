@@ -1,8 +1,4 @@
-# Superbuild for the anti-cheat project.
-#
-# Planned build order: third-party dependencies, then the Red Eclipse lab fork
-# (with LAB_BUILD on), then our libraries and tools. Only the skeleton exists so
-# far. The game fork and every library and tool arrive with later pull requests.
+# Build the offline game fork, then our libraries and tools.
 
 cmake_minimum_required(VERSION 3.20)
 
@@ -44,8 +40,12 @@ add_compile_definitions(LAB_BUILD=1)
 
 enable_testing()
 
-# The game/ submodule (the Red Eclipse lab fork) is added here by a later pull
-# request, before libs/ and tools/, so our modules can link into it.
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/game/src/CMakeLists.txt")
+    message(FATAL_ERROR "Initialize the game submodule with git submodule update --init -- game")
+endif()
+set(LAB_BUILD ON CACHE BOOL "Build the offline lab" FORCE)
+set(LAB_MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Lab modules" FORCE)
+add_subdirectory(game/src game-build)
 
 add_subdirectory(libs)
 add_subdirectory(tools)
