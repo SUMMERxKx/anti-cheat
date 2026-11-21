@@ -77,6 +77,10 @@ On macOS arm64, install the game dependencies with Homebrew:
 brew install cmake pkg-config sdl2 sdl2_image openal-soft libsndfile freetype
 ```
 
+If a newer OpenAL Soft release fails to build against the Mac SDK, use OpenAL Soft 1.24.3 from
+source in a local dependency prefix. SDL2_image 2.8.8 also builds from source if needed. Set
+`PKG_CONFIG_PATH` to that prefix's `lib/pkgconfig` directory when configuring this project.
+
 On Ubuntu:
 
 ```sh
@@ -112,7 +116,8 @@ cd game
 
 On Linux the executable is `anti_cheat_lab_linux`. The dedicated server is
 `anti_cheat_lab_server_macos` or `anti_cheat_lab_server_linux` in the same build directory.
-The lab uses its own `anti-cheat-lab` home directory, separate from a real Red Eclipse install.
+The lab uses its own home directory, separate from a real Red Eclipse install. On macOS it is
+`~/Library/Application Support/Anti-Cheat Lab/`. The Unix product name is `anti-cheat-lab`.
 
 Start a local match from the Offline Match menu and add bots with Insert. Open the console with
 the backquote key and run `lab_dump` to print the current snapshot. It reports `active=0` outside a local match.
@@ -128,6 +133,13 @@ At this upstream revision, ranged shots are projectiles, including the rifle. Za
 the target. Melee attacks use immediate short weapon segments. There is no default ranged weapon
 with true instant hits. Rifle secondary is fast at 100000 world units per second, but still has
 travel time. A later aimbot change must account for this before choosing a weapon.
+
+The macOS arm64 build was checked on an Apple M2 with OpenAL Soft 1.24.3 and SDL2_image 2.8.8.
+A command script launched the graphical client with a separate home directory, started an offline
+Bloodlust match with three bots and ran `lab_dump`. The snapshot was active during the match and
+all zero before play and after disconnect. The game log and a captured frame were inspected.
+The Mac UI tool could not reliably address the unbundled executable, so the check used the game's
+own console commands. No manual movement or aiming was checked.
 
 To run the forbidden-API guard on its own:
 

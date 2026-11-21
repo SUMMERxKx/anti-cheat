@@ -61,7 +61,8 @@ upstream services such as IRC.
 The fork changes the game version, game ID and game name values. Even if someone turned
 networking back on, stock servers would refuse the fork and the fork would refuse stock clients. A
 future unit test will assert that these values differ from upstream. The pinned fork uses game ID
-`anti-cheat-lab`, protocol `-297`, product name `Anti-Cheat Lab` and home name `anti-cheat-lab`.
+`anti-cheat-lab`, protocol `-297`, product name `Anti-Cheat Lab` and Unix name `anti-cheat-lab`.
+The macOS home directory is `~/Library/Application Support/Anti-Cheat Lab/`.
 
 ### 4. Local-game runtime gate
 
