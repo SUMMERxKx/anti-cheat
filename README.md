@@ -30,7 +30,7 @@ or signatures, and never fakes mouse or keyboard input. Nothing here works again
 or on public servers, and nothing here helps anyone evade a real anti-cheat.
 
 [`SAFETY.md`](SAFETY.md) explains the boundary in full and lists how each part of it is enforced,
-including the forbidden-API guard that runs in CI on every change.
+including the forbidden-API guard that CI runs on every pull request and every push to `main`.
 
 ## Status
 

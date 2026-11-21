@@ -19,8 +19,8 @@ root="$(cd "${1:-"$script_dir/../.."}" && pwd)"
 guard="$root/scripts/check-forbidden-apis.sh"
 safety="$root/SAFETY.md"
 
-# The list in SAFETY.md has this many entries. A change to the list should be a
-# deliberate edit here too, so an entry cannot vanish unnoticed.
+# The guard loads this many entries from SAFETY.md. A change to the list should
+# be a deliberate edit here too, so an entry cannot vanish unnoticed.
 expected_entries=30
 
 work="$(mktemp -d)"
@@ -66,19 +66,18 @@ awk '
     inside && match($0, /`[^`]+`/) { print substr($0, RSTART + 1, RLENGTH - 2) }
 ' "$safety" >"$entries"
 
-count="$(grep -c . "$entries" || true)"
-if [ "$count" -eq "$expected_entries" ]; then
-    pass "SAFETY.md lists $expected_entries entries"
-else
-    fail "SAFETY.md lists $count entries, expected $expected_entries"
-fi
-
-# 1. The real repository is clean.
+# 1. The real repository is clean and the guard loads every list entry.
 code="$(guard_code "$root")"
 if [ "$code" -eq 0 ]; then
     pass "guard passes on this repository"
 else
     fail "guard exit $code on this repository"
+    cat "$work/last.out" >&2
+fi
+if grep -qxF "forbidden-api guard: OK ($expected_entries entries checked)" "$work/last.out"; then
+    pass "guard checks $expected_entries entries"
+else
+    fail "guard did not report $expected_entries entries checked"
     cat "$work/last.out" >&2
 fi
 

@@ -22,9 +22,10 @@ The game fork is based on Red Eclipse and is not affiliated with the Red Eclipse
 
 ## Enforcement layers
 
-Each layer is backed by a test or a CI check, not only by this document. Some layers depend on
-code that does not exist yet. Those layers are marked as planned and arrive with the pull request
-that adds the code they protect.
+Only layer 5 is checked by CI today. Layers 2 and 3 will each add a CI check or a unit test when
+they arrive. Layers 1 and 4 are built into the fork code itself. Layers 6 and 7 are project rules
+that code review keeps, with no automated test behind them. Layers marked as planned depend on code
+that does not exist yet and arrive with the pull request that adds the code they protect.
 
 | # | Layer | Status |
 |---|---|---|
@@ -113,7 +114,8 @@ one entry per line, each wrapped in backticks.
 `tests/safety/forbidden_apis_selftest.sh` proves the guard works. It plants each entry in a
 throwaway repository and checks that the guard fails every time. It also checks that a clean tree
 passes, that the `game/` submodule path is skipped, and that a match elsewhere in this file is
-still caught. Both scripts run in CI on every push and pull request.
+still caught. CI runs both scripts on every pull request, on every push to `main` and on manual
+runs.
 
 ### 6. Scope rules for the anti-cheat side
 
