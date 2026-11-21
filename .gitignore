@@ -1,0 +1,9 @@
+# CMake build trees
+/build/
+/build-*/
+/out/
+
+# Editor and OS files
+.DS_Store
+.vscode/
+.idea/
