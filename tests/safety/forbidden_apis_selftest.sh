@@ -4,7 +4,8 @@
 #
 # Builds throwaway git repositories that hold a copy of SAFETY.md and checks that
 # the guard passes a clean tree, fails on every planted list entry, skips the
-# game/ submodule path, and still catches a match in SAFETY.md outside the list.
+# game/ submodule path, still catches a match in SAFETY.md outside the list, and
+# catches real-world uses of a /proc path.
 #
 # The list entries are read from SAFETY.md at run time so this file never holds
 # a forbidden name itself.
@@ -173,6 +174,23 @@ if [ "$code" -eq 2 ]; then
     pass "guard refuses an empty list"
 else
     fail "guard exit $code with an empty list, expected 2"
+fi
+
+# 9. Real-world uses of a /proc path fail the guard. The path is split here so
+# this file does not trip the guard itself.
+proc_dir="/pr""oc/"
+repo="$work/procpath"
+new_repo "$repo"
+mkdir -p "$repo/src" "$repo/scripts"
+printf 'dd if=%s$pid/mem bs=1 count=4\n' "$proc_dir" >"$repo/scripts/dump.sh"
+printf 'const char *fmt = "%s%%d/" "mem";\n' "$proc_dir" >"$repo/src/path.c"
+code="$(guard_code "$repo")"
+if [ "$code" -eq 1 ] && grep -q 'scripts/dump.sh:1:' "$work/last.out" &&
+    grep -q 'src/path.c:1:' "$work/last.out"; then
+    pass "guard fails on shell and C uses of a /proc path"
+else
+    fail "guard exit $code on shell and C uses of a /proc path"
+    cat "$work/last.out" >&2
 fi
 
 if [ "$failures" -gt 0 ]; then

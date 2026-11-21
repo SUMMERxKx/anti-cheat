@@ -71,6 +71,8 @@ below appears in it. The match is a case-insensitive substring match, so an entr
 variants (for example every function whose name starts with an entry). The scan skips the future
 `game/` submodule, which holds upstream game code, and skips the list block in this file. Every
 other line of this file is scanned.
+The guard is a substring tripwire: it catches direct use of these APIs and paths, not code
+deliberately disguised to avoid them, and code review covers the rest.
 
 The guard reads its list from the block below, so this block is the single source of truth. Keep
 one entry per line, each wrapped in backticks.
@@ -92,7 +94,7 @@ one entry per line, each wrapped in backticks.
 - `ptrace`
 - `process_vm_readv`
 - `process_vm_writev`
-- `/mem"` (path literals such as /proc/<pid>/mem)
+- `/proc/` (any /proc path, such as /proc/<pid>/mem)
 - `DYLD_INSERT_LIBRARIES`
 - `LD_PRELOAD`
 - `CGEventPost`
