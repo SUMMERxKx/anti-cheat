@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x86_64
+            os: ubuntu-latest
+            arch: x86_64
+          - name: macOS arm64
+            os: macos-latest
+            arch: arm64
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Check runner architecture
+        run: |
+          echo "Runner architecture: $(uname -m)"
+          test "$(uname -m)" = "${{ matrix.arch }}"
+
+      - name: Forbidden-API guard
+        run: bash scripts/check-forbidden-apis.sh
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
