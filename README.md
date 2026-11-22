@@ -92,7 +92,7 @@ Initialize the pinned code submodule, then build:
 ```sh
 git submodule update --init -- game
 cmake -S . -B build
-cmake --build build --parallel
+cmake --build build --parallel 4
 ctest --test-dir build --output-on-failure
 ```
 
