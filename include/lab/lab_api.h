@@ -32,6 +32,8 @@ typedef struct lab_snapshot {
     float yaw;
     float pitch;
     int32_t weapon;
+    /* Mirrors the engine's primary or secondary fire action, not the physical trigger. */
+    /* Semi-auto weapons clear it after each shot. Full-auto weapons keep it set while held. */
     int32_t fire_held;
     uint32_t enemy_count;
     lab_enemy enemies[LAB_MAX_ENEMIES];

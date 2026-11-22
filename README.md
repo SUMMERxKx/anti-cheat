@@ -126,6 +126,8 @@ The API only includes enemy bots. In a team match, teammates are omitted.
 `include/lab/lab_api.h` documents the small C99 boundary. The game refreshes the snapshot each
 frame, with positions in world units and angles in degrees. `lab_set_view()` uses the same angle
 assignment and range correction as mouse look. Both calls do nothing outside a local offline match.
+`fire_held` follows the engine's fire action, not the physical trigger: a semi-auto weapon such as
+the shotgun clears it after each shot, while a full-auto weapon such as the SMG keeps it set.
 Layer 4 in [`SAFETY.md`](SAFETY.md) describes the gate.
 
 At this upstream revision, ranged shots are projectiles, including the rifle. Zapper primary uses
