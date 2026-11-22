@@ -45,7 +45,7 @@ anti-cheat/
 ├── README.md            scope, safety boundary, build steps
 ├── SAFETY.md            the boundary and how it is enforced
 ├── LICENSE              MIT for our own code
-├── CMakeLists.txt       superbuild: dependencies, then the game fork, then our libs and tools
+├── CMakeLists.txt       superbuild: the game fork, then our libs and tools
 ├── scripts/
 │   ├── check-forbidden-apis.sh   forbidden-API guard
 │   └── fetch-game-data.sh        fetches the upstream game data, not vendored
@@ -125,8 +125,8 @@ The API only includes enemy bots. In a team match, teammates are omitted.
 
 `include/lab/lab_api.h` documents the small C99 boundary. The game refreshes the snapshot each
 frame, with positions in world units and angles in degrees. `lab_set_view()` uses the same angle
-assignment and range correction as mouse look. Both calls are gated by the in-process server's
-local-client flag, a ready local match and the absence of remote clients or demo playback.
+assignment and range correction as mouse look. Both calls do nothing outside a local offline match.
+Layer 4 in [`SAFETY.md`](SAFETY.md) describes the gate.
 
 At this upstream revision, ranged shots are projectiles, including the rifle. Zapper primary uses
 `COLLIDE_SCAN`, but that scans between the muzzle and the moving projectile, not an instant ray to
