@@ -10,7 +10,6 @@ void controller::reset()
 {
     target_id = -1;
     acquired_at = 0;
-    previous_millis = 0;
 }
 
 bool controller::update(const lab_snapshot &snapshot, const settings &config,
@@ -21,10 +20,6 @@ bool controller::update(const lab_snapshot &snapshot, const settings &config,
         reset();
         return false;
     }
-
-    // A map change can reset the engine clock. Unsigned subtraction also handles wraparound.
-    if(snapshot.millis - previous_millis > std::numeric_limits<int32_t>::max()) reset();
-    previous_millis = snapshot.millis;
 
     lab_vec3 from = snapshot.eye;
     if(config.aim_origin == origin::muzzle) from = snapshot.muzzle;

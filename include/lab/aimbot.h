@@ -27,7 +27,6 @@ public:
 private:
     int32_t target_id = -1;
     uint32_t acquired_at = 0;
-    uint32_t previous_millis = 0;
 };
 
 }
