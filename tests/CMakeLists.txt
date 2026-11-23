@@ -1,5 +1,5 @@
 # Toolchain check: a C99 function called from a C++20 test through a plain C
-# ABI, the same shape the lab_api.h boundary will use.
+# ABI, the same shape the lab_api.h boundary uses.
 add_executable(toolchain_test
     toolchain/toolchain_c.c
     toolchain/toolchain_test.cpp)

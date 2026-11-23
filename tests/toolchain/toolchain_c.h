@@ -1,4 +1,4 @@
-/* C99 side of the toolchain check. Shaped like the planned lab_api.h boundary. */
+/* C99 side of the toolchain check. Shaped like the lab_api.h boundary. */
 #ifndef AC_TOOLCHAIN_C_H
 #define AC_TOOLCHAIN_C_H
 

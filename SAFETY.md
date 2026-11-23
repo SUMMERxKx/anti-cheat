@@ -22,29 +22,28 @@ The game fork is based on Red Eclipse and is not affiliated with the Red Eclipse
 
 ## Enforcement layers
 
-Only layer 5 is checked by CI today. Layers 2 and 3 will each add a CI check or a unit test when
-they arrive. Layers 1 and 4 are built into the fork code itself. Layers 6 and 7 are project rules
-that code review keeps, with no automated test behind them. Layers marked as planned depend on code
-that does not exist yet and arrive with the pull request that adds the code they protect.
+Layers 1 to 4 are implemented in the pinned game fork. Layer 5 is checked by CI today.
+Dedicated symbol and protocol tests are still planned. Layers 6 and 7 are project rules kept by
+code review.
 
 | # | Layer | Status |
 |---|---|---|
-| 1 | Capability only inside the fork | Planned, arrives with the fork and the lab interface |
-| 2 | Network code compiled out of the lab build | Planned, arrives with the fork lockout |
-| 3 | Renamed protocol and game identity | Planned, arrives with the fork lockout |
-| 4 | Local-game runtime gate | Planned, arrives with the lab interface |
+| 1 | Capability only inside the fork | Implemented in the lab fork |
+| 2 | Network code compiled out of the lab build | Implemented in the lab fork |
+| 3 | Renamed protocol and game identity | Implemented in the lab fork |
+| 4 | Local-game runtime gate | Implemented in the lab fork |
 | 5 | Forbidden-API guard in CI | Enforced now |
 | 6 | No tuning the cheat against the detector, no "undetectable" settings | In effect now as a project rule |
 | 7 | Scope stated in the README and in this file | In effect now |
 
 The CMake option `LAB_BUILD` already exists and defaults to ON. Configuring with it OFF stops with
-an error, because this repository only supports the offline lab build. The fork lockout in layer 2
-will hang off that option.
+an error, because this repository only supports the offline lab build. The superbuild passes this
+option to the pinned fork.
 
 ### 1. Capability only inside the fork
 
-The aimbot is a library linked into the lab build of the fork. It reads a snapshot of the game
-through `lab_get_snapshot()` and sets the view through `lab_set_view()`. Both functions exist only
+The planned aimbot will be a library linked into the lab build of the fork. It reads a snapshot of
+the game through `lab_get_snapshot()` and sets the view through `lab_set_view()`. Both functions exist only
 in our fork. A stock binary has nothing for the aimbot to attach to. Because the aimbot never
 fakes operating system input, it cannot drive any other game either.
 
@@ -52,24 +51,31 @@ fakes operating system input, it cannot drive any other game either.
 
 With `LAB_BUILD` on, the fork compiles out the code that connects to remote servers, the master
 server link, LAN discovery and server join links. The in-process server binds to loopback only. A
-CI step will inspect the symbols of the lab binary and fail if the remote connect code is present.
+future CI step will inspect the symbols of the lab binary and fail if remote connect code is present.
+The lab also disables the HTTP worker, forces Steam and Discord off, rejects outbound socket
+connections and prevents socket binding outside loopback. These limits also cover optional
+upstream services such as IRC.
 
 ### 3. Distinct protocol and identity
 
 The fork changes the game version, game ID and game name values. Even if someone turned
 networking back on, stock servers would refuse the fork and the fork would refuse stock clients. A
-unit test will assert that these values differ from upstream.
+future unit test will assert that these values differ from upstream. The pinned fork uses game ID
+`anti-cheat-lab`, protocol `-297`, product name `Anti-Cheat Lab` and Unix name `anti-cheat-lab`.
+The macOS home directory is `~/Library/Application Support/Anti-Cheat Lab/`.
 
 ### 4. Local-game runtime gate
 
 `lab_get_snapshot()` returns an empty snapshot and `lab_set_view()` does nothing unless the session
-is a local game. This is defence in depth in case layer 2 ever regresses.
+is a ready local match. The gate checks the in-process server's own local-client flag, rejects
+remote clients and demo playback, and stays closed in editing mode. Only enemy bots appear in the
+snapshot. This is defence in depth in case layer 2 ever regresses.
 
 ### 5. Forbidden-API guard
 
 `scripts/check-forbidden-apis.sh` scans every file we own and fails if any entry from the list
 below appears in it. The match is a case-insensitive substring match, so an entry also catches its
-variants (for example every function whose name starts with an entry). The scan skips the future
+variants (for example every function whose name starts with an entry). The scan skips the
 `game/` submodule, which holds upstream game code, and skips the list block in this file. Every
 other line of this file is scanned.
 The guard is a substring tripwire: it catches direct use of these APIs and paths, not code
