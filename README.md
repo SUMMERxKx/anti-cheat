@@ -50,7 +50,10 @@ anti-cheat/
 │   ├── check-forbidden-apis.sh   forbidden-API guard
 │   └── fetch-game-data.sh        fetches the upstream game data, not vendored
 ├── game/                git submodule pointing at SUMMERxKx/anti-cheat-lab
-├── include/lab/lab_api.h         C99 interface between the game and our code
+├── include/lab/
+│   ├── lab_api.h        C99 interface between the game and our code
+│   ├── aimmath.h        C++20 aim maths interface
+│   └── aimbot.h         C++20 aimbot settings and controller
 ├── libs/
 │   ├── labtrace/        (planned) C99 telemetry writer and reader
 │   ├── aimmath/         C++20 aim maths
@@ -124,8 +127,9 @@ the backquote key and run `lab_dump` to print the current snapshot. It reports `
 The API only includes enemy bots. In a team match, teammates are omitted.
 
 `include/lab/lab_api.h` documents the small C99 boundary. The game refreshes the snapshot each
-frame before the player's shot, with positions in world units and angles in degrees. `lab_set_view()` uses the same angle
-assignment and range correction as mouse look. Both calls do nothing outside a local offline match.
+frame before the player's shot, with positions in world units and angles in degrees.
+`lab_set_view()` uses the same angle assignment and range correction as mouse look. Both calls do
+nothing outside a local offline match.
 `fire_held` follows the engine's fire action, not the physical trigger: a semi-auto weapon such as
 the shotgun clears it after each shot, while a full-auto weapon such as the SMG keeps it set.
 Layer 4 in [`SAFETY.md`](SAFETY.md) describes the gate.
@@ -141,9 +145,10 @@ lab_aim 1
 
 The aimbot aims at a visible enemy bot's head. `lab_aim 0` turns aiming off (the default).
 `lab_aim 1` snaps in one frame when you press F or fire. `lab_aim 2` turns smoothly while F or
-full-auto fire is held, because a semi-auto shot clears fire after one frame. The closest angle to the crosshair
-wins, with distance breaking ties. The selected bot stays selected until it dies, loses visibility,
-or leaves the cone. Releasing both aim and fire clears the selection and reaction timer.
+full-auto fire is held, because a semi-auto shot clears fire after one frame. The closest angle to
+the crosshair wins, with distance breaking ties. The selected bot stays selected until it dies,
+loses visibility, or leaves the cone. Releasing both aim and fire clears the selection and reaction
+timer.
 
 `lab_aim_fov` sets the maximum angle from the crosshair in degrees (default 25).
 `lab_aim_speed` caps smooth turning in degrees per second (default 360).
@@ -156,7 +161,8 @@ At this upstream revision, ranged shots are projectiles, including the rifle. Za
 `COLLIDE_SCAN`, but that scans between the muzzle and the moving projectile, not an instant ray to
 the target. Melee attacks use immediate short weapon segments. There is no default ranged weapon
 with true instant hits. Rifle secondary is fast at 100000 world units per second, but still has
-travel time. The aimbot aims at the current head position and does not lead projectiles or control recoil.
+travel time. The aimbot aims at the current head position and does not lead projectiles or
+control recoil.
 
 The macOS arm64 build was checked on an Apple M2 with OpenAL Soft 1.24.3 and SDL2_image 2.8.8.
 A command script launched the graphical client with a separate home directory, started an offline
