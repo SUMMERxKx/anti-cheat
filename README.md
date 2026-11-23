@@ -36,7 +36,7 @@ including the forbidden-API guard that CI runs on every pull request and every p
 
 The offline game fork, network lockout and C99 lab interface are in place. The superbuild builds
 the client and server, and CI runs the existing toolchain and forbidden-API checks on macOS arm64
-and Linux. The aimbot, telemetry and detector are still planned.
+and Linux. The aimbot supports snap and smooth aim. Telemetry and the detector are still planned.
 
 ## Repository layout
 
@@ -51,12 +51,12 @@ anti-cheat/
 │   └── fetch-game-data.sh        fetches the upstream game data, not vendored
 ├── game/                git submodule pointing at SUMMERxKx/anti-cheat-lab
 ├── include/lab/lab_api.h         C99 interface between the game and our code
-├── libs/                (planned, empty for now)
-│   ├── labtrace/        C99 telemetry writer and reader
+├── libs/
+│   ├── labtrace/        (planned) C99 telemetry writer and reader
 │   ├── aimmath/         C++20 aim maths
 │   ├── aimbot/          C++20 target selection and aim controllers
-│   ├── humanmodel/      C++20 scripted human-like aim model, always labelled SYNTHETIC
-│   └── detect/          C++20 feature extraction, heuristics and scoring
+│   ├── humanmodel/      (planned) C++20 scripted human-like aim model, always labelled SYNTHETIC
+│   └── detect/          (planned) C++20 feature extraction, heuristics and scoring
 ├── tools/               (planned, empty for now)
 │   ├── acdetect/        recorded runs to a JSON and Markdown detection report
 │   ├── labsim/          headless simulator for CI, no GPU needed
@@ -130,11 +130,32 @@ assignment and range correction as mouse look. Both calls do nothing outside a l
 the shotgun clears it after each shot, while a full-auto weapon such as the SMG keeps it set.
 Layer 4 in [`SAFETY.md`](SAFETY.md) describes the gate.
 
+### Aiming in the lab
+
+In a local match with bots, enter these console commands on separate lines:
+
+```text
+bind F [lab_aim_key]
+lab_aim 1
+```
+
+Hold F or fire to aim at a visible enemy bot's head. `lab_aim 0` turns aiming off (the default),
+`lab_aim 1` snaps in one frame, and `lab_aim 2` turns smoothly. The closest angle to the crosshair
+wins, with distance breaking ties. The selected bot stays selected until it dies, loses visibility,
+or leaves the cone. Releasing both aim and fire clears the selection and reaction timer.
+
+`lab_aim_fov` sets the maximum angle from the crosshair in degrees (default 25).
+`lab_aim_speed` caps smooth turning in degrees per second (default 360).
+`lab_aim_ease` adds exponential ease-out in inverse seconds (default 0 disables easing).
+`lab_aim_reaction` delays smooth aim after acquiring a target in milliseconds (default 0).
+`lab_aim_origin 0` uses the eye (default), and `lab_aim_origin 1` uses the muzzle to compare parallax.
+The aim key is a game action bound through the console, with no operating system input.
+
 At this upstream revision, ranged shots are projectiles, including the rifle. Zapper primary uses
 `COLLIDE_SCAN`, but that scans between the muzzle and the moving projectile, not an instant ray to
 the target. Melee attacks use immediate short weapon segments. There is no default ranged weapon
 with true instant hits. Rifle secondary is fast at 100000 world units per second, but still has
-travel time. A later aimbot change must account for this before choosing a weapon.
+travel time. The aimbot aims at the current head position and does not lead projectiles or control recoil.
 
 The macOS arm64 build was checked on an Apple M2 with OpenAL Soft 1.24.3 and SDL2_image 2.8.8.
 A command script launched the graphical client with a separate home directory, started an offline
