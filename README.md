@@ -139,8 +139,9 @@ bind F [lab_aim_key]
 lab_aim 1
 ```
 
-Hold F or fire to aim at a visible enemy bot's head. `lab_aim 0` turns aiming off (the default),
-`lab_aim 1` snaps in one frame, and `lab_aim 2` turns smoothly. The closest angle to the crosshair
+The aimbot aims at a visible enemy bot's head. `lab_aim 0` turns aiming off (the default).
+`lab_aim 1` snaps in one frame when you press F or fire. `lab_aim 2` turns smoothly while F or
+full-auto fire is held, because a semi-auto shot clears fire after one frame. The closest angle to the crosshair
 wins, with distance breaking ties. The selected bot stays selected until it dies, loses visibility,
 or leaves the cone. Releasing both aim and fire clears the selection and reaction timer.
 
