@@ -42,8 +42,8 @@ option to the pinned fork.
 
 ### 1. Capability only inside the fork
 
-The planned aimbot will be a library linked into the lab build of the fork. It reads a snapshot of
-the game through `lab_get_snapshot()` and sets the view through `lab_set_view()`. Both functions exist only
+The aimbot is a library linked into the lab build of the fork. It reads a snapshot of the game
+through `lab_get_snapshot()` and sets the view through `lab_set_view()`. Both functions exist only
 in our fork. A stock binary has nothing for the aimbot to attach to. Because the aimbot never
 fakes operating system input, it cannot drive any other game either.
 
